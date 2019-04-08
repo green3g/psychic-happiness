@@ -128,12 +128,12 @@ foreach($change in $changes) {
 }
 $changes = $changes.Join([Environment]::NewLine)
 $prompt = "The following files have been modified. Please enter a message to describe your changes. `n $changes"
-$multiLineText = Read-MultiLineInputBoxDialog -Message $prompt -WindowTitle "Changes" -DefaultText "Updated web map for lonsdale..."
+$multiLineText = Read-MultiLineInputBoxDialog -Message $prompt -WindowTitle "Changes" -DefaultText "Enter update message here..."
 if ($multiLineText -eq $null) { Write-Host "You clicked Cancel" }
 else { 
     $result = git commit -m $multiLineText
 
-    $buttonClicked = Read-MessageBoxDialog -Message $result -WindowTitle "Message Box Example" -Buttons OKCancel -Icon Exclamation
+    $buttonClicked = Read-MessageBoxDialog -Message $result -WindowTitle "Result" -Buttons OKCancel -Icon Exclamation
     if ($buttonClicked -eq "OK") { Write-Host "Thanks for pressing OK" }
     else { Write-Host "You clicked $buttonClicked" }
 }

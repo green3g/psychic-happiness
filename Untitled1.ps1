@@ -117,13 +117,25 @@ function Read-MultiLineInputBoxDialog([string]$Message, [string]$WindowTitle, [s
     return $form.Tag
 }
 
-$multiLineText = Read-MultiLineInputBoxDialog -Message "Please enter some text. It can be multiple lines" -WindowTitle "Multi Line Example" -DefaultText "Enter some text here..."
-if ($multiLineText -eq $null) { Write-Host "You clicked Cancel" }
-else { Write-Host "You entered the following text: $multiLineText" }
-
 git add .
-$result = git commit -m $multiLineText
+$changes = git status --short
+$changes = $changes.Split([Environment]::NewLine)
+foreach($change in $changes) {
+    $index = $changes.IndexOf($change)
+    $change = $change.Replace("A ", "Added: ")
+    $change = $change.Replace("M ", "Modified: ")
+    $changes[$index] = $change
+}
+$changes = $changes.Join([Environment]::NewLine)
+$prompt = "The following files have been modified. Please enter a message to describe your changes. `n $changes"
+$multiLineText = Read-MultiLineInputBoxDialog -Message $prompt -WindowTitle "Changes" -DefaultText "Updated web map for lonsdale..."
+if ($multiLineText -eq $null) { Write-Host "You clicked Cancel" }
+else { 
+    $result = git commit -m $multiLineText
 
-$buttonClicked = Read-MessageBoxDialog -Message $result -WindowTitle "Message Box Example" -Buttons OKCancel -Icon Exclamation
-if ($buttonClicked -eq "OK") { Write-Host "Thanks for pressing OK" }
-else { Write-Host "You clicked $buttonClicked" }
+    $buttonClicked = Read-MessageBoxDialog -Message $result -WindowTitle "Message Box Example" -Buttons OKCancel -Icon Exclamation
+    if ($buttonClicked -eq "OK") { Write-Host "Thanks for pressing OK" }
+    else { Write-Host "You clicked $buttonClicked" }
+}
+
+

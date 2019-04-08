@@ -1,4 +1,11 @@
-﻿function Read-MultiLineInputBoxDialog([string]$Message, [string]$WindowTitle, [string]$DefaultText)
+﻿# Show message box popup and return the button clicked by the user.
+function Read-MessageBoxDialog([string]$Message, [string]$WindowTitle, [System.Windows.Forms.MessageBoxButtons]$Buttons = [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]$Icon = [System.Windows.Forms.MessageBoxIcon]::None)
+{
+    Add-Type -AssemblyName System.Windows.Forms
+    return [System.Windows.Forms.MessageBox]::Show($Message, $WindowTitle, $Buttons, $Icon)
+}
+
+function Read-MultiLineInputBoxDialog([string]$Message, [string]$WindowTitle, [string]$DefaultText)
 {
 <#
     .SYNOPSIS
@@ -115,4 +122,8 @@ if ($multiLineText -eq $null) { Write-Host "You clicked Cancel" }
 else { Write-Host "You entered the following text: $multiLineText" }
 
 git add .
-git commit -m $multiLineText
+$result = git commit -m $multiLineText
+
+$buttonClicked = Read-MessageBoxDialog -Message $result -WindowTitle "Message Box Example" -Buttons OKCancel -Icon Exclamation
+if ($buttonClicked -eq "OK") { Write-Host "Thanks for pressing OK" }
+else { Write-Host "You clicked $buttonClicked" }
